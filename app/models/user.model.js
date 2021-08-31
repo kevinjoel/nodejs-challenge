@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-let User = new Schema(
+const User = new Schema(
     {
         id: { type: 'number' },
         email: { type: 'string' },

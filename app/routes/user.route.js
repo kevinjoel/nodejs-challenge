@@ -1,5 +1,5 @@
 import express from 'express';
-import { body, check, param } from 'express-validator';
+import { param } from 'express-validator';
 
 import {
     UserController
@@ -8,14 +8,6 @@ import {
 import * as validator from '../middlewares/validator.js';
 
 const router = express.Router();
-
-
-// body("email", "El ID del usuario es requerido.").notEmpty(),
-// body("first_name", "El ID del usuario es requerido.").notEmpty(),
-// body("last_name", "El ID del usuario es requerido.").notEmpty(),
-// body("company", "El ID del usuario es requerido.").notEmpty(),
-// body("url", "El ID del usuario es requerido.").notEmpty(),
-// body("text", "El ID del usuario es requerido.").notEmpty()
 
 router
     .route("/:id")
@@ -26,7 +18,7 @@ router
                 .isNumeric().withMessage("El ID del usuario debe ser un número.")
         ],
         validator.checkRequest,
-        UserController.create
+        UserController.update
     )
 
 

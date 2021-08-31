@@ -7,27 +7,33 @@ const {
 
 const UserModel = models.UserModel;
 
-export async function create(req, res) {
+export async function update(req, res) {
     try {
         const params = req.params;
         const body = req.body;
 
-        const user = await findUserById(params.id);
-        if (!user)
-            return res.status(204).json({
-                ok: false,
-                code: -1,
-                message: 'No se econtro ningún usuario con este ID.'
-            })
-
         UserModel.updateOne(
-            { id: user.id },
+            { id: params.id },
             { $set: body },
             (err, updated) => {
-                console.log("OCURRIO UN ERROR AL ACTUALIZAR: ", err);
-                console.log("SE ACTUALIZO?", updated);
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        code: -1,
+                        message: 'Internal server error.'
+                    })
+                }
 
-                res.send("ok")
+                if (updated.matchedCount)
+                    res.status(201).json({
+                        ok: true,
+                        message: 'Usuario actualizado correctamente.'
+                    })
+                else
+                    res.status(404).json({
+                        ok: false,
+                        message: 'No se contro nigún usuario para actualizar.'
+                    })
             }
         )
 
