@@ -21,7 +21,6 @@ router
         UserController.update
     )
 
-
 router
     .route("/:ids")
     .get(
@@ -30,6 +29,16 @@ router
         ],
         validator.checkRequest,
         UserController.findUsers
+    )
+
+router
+    .route("/:id")
+    .delete(
+        [
+            param("id").notEmpty().withMessage("El ID del usuario es requerido.")
+        ],
+        validator.checkRequest,
+        UserController.deleteUser
     )
 
 export default router;

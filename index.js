@@ -2,7 +2,6 @@ import express from 'express';
 import routes from './app/routes/index.js';
 import DBConection from './app/config/db.js';
 
-
 const {
     PORT
 } = process.env;

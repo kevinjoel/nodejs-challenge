@@ -1,6 +1,7 @@
 import models from '../models/index.js';
 import fetch from 'node-fetch';
 import * as constants from '../config/constants.js';
+
 const {
     NODE_ENV
 } = process.env;
@@ -25,13 +26,15 @@ export async function update(req, res) {
                 }
 
                 if (updated.matchedCount)
-                    res.status(201).json({
+                    res.status(200).json({
                         ok: true,
+                        code: 0,
                         message: 'Usuario actualizado correctamente.'
                     })
                 else
                     res.status(404).json({
                         ok: false,
+                        code: 1,
                         message: 'No se contro nigún usuario para actualizar.'
                     })
             }
@@ -59,6 +62,9 @@ export async function findUsers(req, res) {
             const user = await findUserById(id);
             if (!user) {
                 const base_url = NODE_ENV == "development" ? constants.URL_API_DEV : constants.URL_API_PROD;
+
+                //TODO REVISAR AQUI SI ES UNA RESPUESTA 404
+                //TODO REALIZAR ESTA PETICION DE MANERA PARALELA
                 const response = await fetch(base_url + id);
                 const user_data = await response.json();
 
@@ -84,10 +90,40 @@ export async function findUsers(req, res) {
             ok: true,
             message: 'Usuario/s econtrados correctamente.',
             code: 0,
-            data: [
-                ...data,
-                ...create_data
-            ]
+            data,
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            code: -1,
+            message: "Internal server error."
+        })
+    }
+}
+
+export async function deleteUser(req, res) {
+    try {
+        const params = req.params;
+
+        UserModel.deleteOne({ id: params.id }, (err, deleted) => {
+            if (err)
+                return res.status(500).json({
+                    ok: false,
+                    code: -1,
+                    message: "Internal server error."
+                })
+
+            if (deleted.deletedCount)
+                res.status(200).json({
+                    ok: true,
+                    message: "Usuario eliminado correctamente."
+                })
+            else
+                res.status(404).json({
+                    ok: false,
+                    message: "No existe nigun usuario con este ID para eliminar."
+                })
         })
     } catch (error) {
         console.log(error);
