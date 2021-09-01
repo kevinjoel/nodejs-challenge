@@ -43,7 +43,7 @@ class UserController {
                             ok: false,
                             code: 1,
                             message: 'No se contro nigún usuario para actualizar.'
-                        }) 
+                        })
                 }
             )
 
