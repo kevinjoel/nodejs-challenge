@@ -8,6 +8,7 @@ import {
 import * as validator from '../middlewares/validator.js';
 
 const router = express.Router();
+const userController = new UserController();
 
 router
     .route("/:id")
@@ -18,7 +19,7 @@ router
                 .isNumeric().withMessage("El ID del usuario debe ser un número.")
         ],
         validator.checkRequest,
-        UserController.update
+        userController.updateUser
     )
 
 router
@@ -28,7 +29,7 @@ router
             param("ids").notEmpty().withMessage("El ID del usuario/s es requerido.")
         ],
         validator.checkRequest,
-        UserController.findUsers
+        userController.findUser
     )
 
 router
@@ -38,7 +39,7 @@ router
             param("id").notEmpty().withMessage("El ID del usuario es requerido.")
         ],
         validator.checkRequest,
-        UserController.deleteUser
+        userController.deleteUser
     )
 
 export default router;
