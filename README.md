@@ -48,6 +48,6 @@ For stuff like heroku deployment, aws elasticbeanstalk, or own server run, `npm 
 
 ### Other scripts
 
-* `test` - perform all available tests
+* `npm run test` - perform all available tests
 
 Best rewards.
