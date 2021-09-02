@@ -4,10 +4,7 @@ export function checkRequest(req, res, next) {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({
-                ok: false,
-                code: -2,
-                errors: errors.array(),
+            return res.status(500).json({
                 code: "invalid_request_params"
             });
         } else {
@@ -15,8 +12,6 @@ export function checkRequest(req, res, next) {
         }
     } catch (error) {
         res.status(500).json({
-            ok: false,
-            code: -1,
             message: "Internal Server Error"
         })
     }

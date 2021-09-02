@@ -80,7 +80,15 @@ class UserController {
             const data = [], create_data = [];
 
             //Format the ids to obtain a array
-            const users_id = (params.ids).split(",");
+            const users_id = (params.ids).split("&")[0].split(",");
+            //Validate the every idi received is a number
+            const exist_string = users_id.some(id => isNaN(id));
+
+            if (exist_string)
+                //If some ID is a string return a error
+                return res.status(500).json({
+                    message: "Invalid param request ID user not a number"
+                })
 
             //Clean the repetead elements and perform a recode to array
             for (const id of [...new Set(users_id)]) {
@@ -95,13 +103,13 @@ class UserController {
                 if (!user.error) {
                     //If exist push this on new array to repsonse
                     data.push({
-                        id: user.id,
-                        email: user.email,
-                        first_name: user.first_name,
-                        last_name: user.last_name,
-                        avatar: user.avatar,
-                        url: user.url,
-                        text: user.text
+                        id: user.data.id,
+                        email: user.data.email,
+                        first_name: user.data.first_name,
+                        last_name: user.data.last_name,
+                        avatar: user.data.avatar,
+                        url: user.data.url,
+                        text: user.data.text
                     });
                 } else {
                     //If not exist get new user data to registered in DB collection
@@ -119,6 +127,9 @@ class UserController {
                     } else {
                         //If not request print on log the status of response
                         console.log("FETCH RESPONSE FAIL: ", response.status)
+                        return res.status(500).json({
+                            message: "Error on will fetch user data."
+                        })
                     }
                 }
             }
@@ -129,13 +140,20 @@ class UserController {
                 await UserModel.insertMany(create_data);
             }
 
+            console.log(query_params)
             if (query_params.sort_by) {
                 //If in the query params get sort by search if exist
                 const find_sort_key = data.findIndex(e => e?.[query_params.sort_by])
                 if (find_sort_key != -1) {
 
+                    const order_by = query_params.order ? (query_params.order).toUpperCase() : null;
+                    if (query_params.order && (order_by != "ASC" && order_by != "DESC"))
+                        return res.status(500).json({
+                            message: `Error order method ${order_by} not found.`
+                        })
+
                     //ORDER TYPE ASC OR DESC
-                    const order = query_params.order == "ASC" ? 1 : -1;
+                    const order = order_by == "ASC" ? 1 : -1;
 
                     //SORT TYPE IF THIS A NUMBER OR STRING
                     const sort_type = a => ((query_params.sort_by).toLowerCase() == "id" ? parseInt(a[query_params.sort_by]) : a[query_params.sort_by].toUpperCase());
@@ -147,13 +165,21 @@ class UserController {
                         return order * ((a > b) - (b > a));
                     })
                 } else {
-                    console.log(`SORT BY ERROR: ${query_params.sort_by} NO EXISTE EN LOS KEY PARA BUSCAR`)
+                    console.log(`SORT BY ERROR: ${query_params.sort_by} NOT FOUND key IN COLLECTION`)
+                    return res.status(500).json({
+                        message: `Error ${query_params.sort_by} not found key in collection.`
+                    })
                 }
             }
 
-            res.status(201).json({
-                message: 'User found successfully.',
-                data
+            if (data.length)
+                return res.status(200).json({
+                    message: 'User found successfully.',
+                    data
+                })
+
+            res.status(404).json({
+                message: 'Not found user.',
             })
         } catch (error) {
             //If error ocurren when try to update data print log error an return a error on request
@@ -188,7 +214,7 @@ class UserController {
                     if (!deleted.deletedCount)
                         //If user not found return an error
                         return res.status(404).json({
-                            message: "No existe nigun usuario con este ID para eliminar."
+                            message: "Not found user with this ID."
                         })
 
                     res.status(200).json({
@@ -218,11 +244,11 @@ async function findUserById(userId) {
         UserModel.find({ id: userId }, (err, user) => {
             if (err) {
                 console.log("findUserById ERROR: ", err);
-                reject({ error: true, code: "REQUEST_ERROR" })
+                return reject({ error: true, code: "REQUEST_ERROR" })
             }
 
-            if (user.length)
-                resolve({ error: false, ...user[0] })
+            if (user?.length)
+                resolve({ error: false, data: user[0] })
             else
                 resolve({ error: true, code: "NOT_FOUND" })
 

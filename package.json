@@ -5,7 +5,7 @@
   "description": "skydropx",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha test/*.js --timeout 15000",
     "dev": "nodemon -r dotenv/config index.js"
   },
   "repository": {
@@ -19,9 +19,12 @@
   },
   "homepage": "https://github.com/kevinjoel/nodejs-challenge#readme",
   "dependencies": {
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.12.1",
+    "mocha": "^9.1.1",
     "mongodb": "^4.1.1",
     "mongoose": "^6.0.3",
     "node-fetch": "^3.0.0"

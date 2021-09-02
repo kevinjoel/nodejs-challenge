@@ -37,6 +37,7 @@ router
     .delete(
         [
             param("id").notEmpty().withMessage("El ID del usuario es requerido.")
+                .isNumeric().withMessage("El ID del usuario debe ser un número.")
         ],
         validator.checkRequest,
         userController.deleteUser
