@@ -26,11 +26,11 @@ Also, be sure to have `git` available in your PATH, `npm` might need it (You can
 
 Before anything else, you must install nodemon, pm2 package and mocha package on your machine.
 - ### Install nodemon package
-Run on your terminal `npm i -g nodemon`, with this comand install global package.
+Run on your terminal `npm i -g nodemon`, with this command install global package.
 - ### Install pm2 package
-Run on your terminal `npm i -g pm2`, with this comand install global package.
+Run on your terminal `npm i -g pm2`, with this command install global package.
 - ### Install mocha package
-Run on your terminal `npm i -g mocha`, with this comand install global package.
+Run on your terminal `npm i -g mocha`, with this command install global package.
 
     $ git clone https://github.com/kevinjoel/nodejs-challenge
     $ cd nodejs-challenge
@@ -44,7 +44,7 @@ Run on your terminal `npm run dev`, the server will restart everytime you make a
 
 ### Running Production Server
 
-For stuff like heroku deployment, aws elasticbeanstalk, or own server run, `npm run start`
+For stuff like heroku deployment, aws elasticbeanstalk, or your own server, run `npm run start`
 
 ### Other scripts
 
