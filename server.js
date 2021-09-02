@@ -1,6 +1,6 @@
 import express from 'express';
 import routes from './app/routes/index.js';
-import DBConection from './app/config/db.js';
+import DBConection from './app/models/db.conection.js';
 
 const {
     PORT,
@@ -25,7 +25,13 @@ app.use("/api", routes);
 
 app.listen(port, () => {
     console.log(`Server Nodejs Challenge mood: ${NODE_ENV} running on port: ${port}`)
-    DBConection.once("open", () => {
+
+    DBConection.on("error", (err) => {
+        console.log(err);
+        process.exit(1);
+    })
+
+    DBConection.on("open", () => {
         console.log("MongoDB database conection established successfully")
     })
 });
