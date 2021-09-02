@@ -126,16 +126,24 @@ class UserController {
             } catch (error) {
                 //If error ocurren when try to update data print log error an return a error on request
                 console.log("findUser ERROR: ", error);
-                res.status(500).json({
+                return res.status(500).json({
                     message: "Internal server error."
                 })
             }
         }
 
         if (create_data.length) {
-            //If array to new users has a element
-            //Use a funcion to insert all element in DB collection
-            await UserModel.insertMany(create_data);
+            try {
+                //If array to new users has a element
+                //Use a funcion to insert all element in DB collection
+                await UserModel.insertMany(create_data);
+            } catch (error) {
+                //If error ocurren when try to update data print log error an return a error on request
+                console.log("findUser ERROR: ", error);
+                return res.status(500).json({
+                    message: "Internal server error."
+                })
+            }
         }
 
         if (query_params.sort_by) {
