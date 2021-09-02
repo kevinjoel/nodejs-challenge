@@ -20,7 +20,7 @@ Also, be sure to have `git` available in your PATH, `npm` might need it (You can
 
 ### How to install mongodb
 
-  Just go on [official Mongodb website](https://docs.mongodb.com/manual/installation/) and download the installer.
+  Just go on [official Mongodb website](https://docs.mongodb.com/manual/installation/) and download the installer and follow the steps for installation
 
 ## Install
 
