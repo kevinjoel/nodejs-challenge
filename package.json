@@ -9,7 +9,7 @@
     "start": "npm run prod",
     "server": "node ./server.js",
     "stop": "pm2 stop challenge.config.cjs",
-    "dev": "pm2 start challenge.config.cjs --env development",
+    "dev": "nodemon -r dotenv/config index.js",
     "prod": "pm2 start challenge.config.cjs --env production"
   },
   "repository": {
