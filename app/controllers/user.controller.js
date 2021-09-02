@@ -9,71 +9,73 @@ const {
 const UserModel = models.UserModel;
 
 /**
- * A class UserController
  * @class UserController
+ * @description Class controller for methods available to a user
  * @param req?: Object - The request
  * @param res?: Object - The response
  */
 class UserController {
+
+    /**
+     * @method updateUser
+     * @desc Update user data by ID and return message
+     * @param {*} id 
+     * @returns {JSON} response
+     */
     async updateUser(req, res) {
         try {
+            //Get id user from a params on request
             const params = req.params;
+            //Get data to replace in user 
             const body = req.body;
 
+            //Call method from model to update user data 
             UserModel.updateOne(
-                { id: params.id },
-                { $set: body },
+                { id: params.id }, //Query to search user by id
+                { $set: body }, //Data to update user
                 (err, updated) => {
-                    if (err) {
+                    if (err)
                         return res.status(500).json({
-                            ok: false,
-                            code: -1,
                             message: 'Internal server error.'
                         })
-                    }
 
-                    if (updated.matchedCount)
-                        res.status(200).json({
-                            ok: true,
-                            code: 0,
-                            message: 'Usuario actualizado correctamente.'
+                    if (!updated.matchedCount)
+                        //If user not found return an error
+                        return res.status(404).json({
+                            message: 'Not found user.'
                         })
-                    else
-                        res.status(404).json({
-                            ok: false,
-                            code: 1,
-                            message: 'No se contro nigún usuario para actualizar.'
-                        })
+
+                    //If the user exists, the data is updated if the data is the same, return the same message 
+                    res.status(200).json({
+                        message: 'User data succeessfully updated.'
+                    })
                 }
             )
 
         } catch (error) {
+            //If error ocurren when try to update data print log error an return a error on request
+            console.log("updatedUser ERROR: ", error);
             res.status(500).json({
-                ok: false,
-                code: -1,
                 message: "Internal server error."
             })
         }
     }
 
     /**
-        Find a user or users by ID return a array of users.
-        # API
-        ```
-        @method findUser
-        @param ids: Number - ID or IDS of user to find in databases.
-        @param sort_by: String Optional* - Base value to sort data results.
-        @param order: String Optional- The sense of order (ASC or DESC)
-        ```
-        # Examples
-        ```
-        UserController.findUser(req, res);
-        ```
-    */
+     * @method
+     * @desc Find a user or users by ID return a array of users
+     * @method findUser
+     * @param ids: Number - ID or IDS of user to find in databases.
+     * @param sort_by: String Optional* - Base value to sort data results.
+     * @param order: String Optional- The sense of order (ASC or DESC)
+     * @returns {JSON} response
+     */
     async findUser(req, res) {
         try {
-            const params = req.params; //Get a JSON of the received params 
-            const query_params = req.query; //Get a JSON of the received query params Ej. request: url_api_rest?test=test
+            //Get id or ids from a params on request
+            const params = req.params;
+            //Get a JSON of the received query params Ej. request: url_api_rest?test=test
+            const query_params = req.query;
 
             const data = [], create_data = [];
 
@@ -85,10 +87,8 @@ class UserController {
 
                 //Search this user with current ID
                 const user = await findUserById(id);
-                if(user.error && user.code != "NOT_FOUND")
+                if (user.error && user.code != "NOT_FOUND")
                     return res.status(500).json({
-                        ok: false,
-                        code: -1,
                         message: "Internal server error."
                     })
 
@@ -152,51 +152,53 @@ class UserController {
             }
 
             res.status(201).json({
-                ok: true,
-                message: 'Usuario/s econtrado/s correctamente.',
-                code: 0,
+                message: 'User found successfully.',
                 data
             })
         } catch (error) {
-            console.log("API FINDUSER ERROR: ", error);
+            //If error ocurren when try to update data print log error an return a error on request
+            console.log("findUser ERROR: ", error);
             res.status(500).json({
-                ok: false,
-                code: -1,
                 message: "Internal server error."
             })
         }
     }
 
+    /**
+     * @method
+     * @desc Delete user by ID
+     * @method deleteUser
+     * @param ids: Number - ID or IDS of user to find in databases.
+     * @returns {JSON} response
+     */
     async deleteUser(req, res) {
         try {
+            //Get a id user to params
             const params = req.params;
 
-            UserModel.deleteOne({ id: params.id }, (err, deleted) => {
-                if (err)
-                    return res.status(500).json({
-                        ok: false,
-                        code: -1,
-                        message: "Internal server error."
-                    })
+            //Call method from model to delete user 
+            UserModel.deleteOne(
+                { id: params.id }, //Query to search user by id
+                (err, deleted) => {
+                    if (err)
+                        return res.status(500).json({
+                            message: "Internal server error."
+                        })
 
-                if (deleted.deletedCount)
+                    if (!deleted.deletedCount)
+                        //If user not found return an error
+                        return res.status(404).json({
+                            message: "No existe nigun usuario con este ID para eliminar."
+                        })
+
                     res.status(200).json({
-                        ok: true,
-                        code: 0,
-                        message: "Usuario eliminado correctamente."
+                        message: "User succeessfully deleted."
                     })
-                else
-                    res.status(404).json({
-                        ok: false,
-                        code: 0,
-                        message: "No existe nigun usuario con este ID para eliminar."
-                    })
-            })
+                })
         } catch (error) {
-            console.log(error);
+            //If error ocurren when try to update data print log error an return a error on request
+            console.log("deleteUser ERROR: ", error);
             res.status(500).json({
-                ok: false,
-                code: -1,
                 message: "Internal server error."
             })
         }
