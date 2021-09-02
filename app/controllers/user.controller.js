@@ -1,12 +1,12 @@
-import models from '../models/index.js';
+import {
+    UserModel
+} from '../models/index.js';
 import fetch from 'node-fetch';
 import * as constants from '../config/constants.js';
 
 const {
     NODE_ENV
 } = process.env;
-
-const UserModel = models.UserModel;
 
 /**
  * @class UserController
