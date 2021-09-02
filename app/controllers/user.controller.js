@@ -85,7 +85,14 @@ class UserController {
 
                 //Search this user with current ID
                 const user = await findUserById(id);
-                if (user) {
+                if(user.error && user.code != "NOT_FOUND")
+                    return res.status(500).json({
+                        ok: false,
+                        code: -1,
+                        message: "Internal server error."
+                    })
+
+                if (!user.error) {
                     //If exist push this on new array to repsonse
                     data.push({
                         id: user.id,
@@ -196,18 +203,26 @@ class UserController {
     }
 }
 
+/**
+ * @method
+ * @desc Find user by ID
+ * @param {*} userId 
+ * @returns {JSON} user
+ * @throws {REQUEST_ERROR} Internal error when try find user 
+ * @throws {NOT_FOUND} User not found in collection
+ */
 async function findUserById(userId) {
     return await new Promise((resolve, reject) => {
         UserModel.find({ id: userId }, (err, user) => {
             if (err) {
-                reject(false)
+                console.log("findUserById ERROR: ", err);
+                reject({ error: true, code: "REQUEST_ERROR" })
             }
 
-            // console.log("USER", user);
             if (user.length)
-                resolve(user[0])
+                resolve({ error: false, ...user[0] })
             else
-                resolve(null)
+                resolve({ error: true, code: "NOT_FOUND" })
 
         })
     })
